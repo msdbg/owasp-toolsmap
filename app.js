@@ -478,15 +478,23 @@
             case 'technique':
                 d.classList.add('mm-technique');
                 d.innerHTML = '<span class="mm-tech-id">' + esc(n.techId) + '</span><span class="mm-tech-name">' + esc(n.techName) + '</span>';
-                if (cweLinks[n.techId]) {
-                    d.innerHTML += '<a href="' + esc(cweLinks[n.techId]) + '" target="_blank" class="mm-cwe-link" onclick="event.stopPropagation()" title="Open CWE definition"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a>';
+                let techUrl = cweLinks[n.techId];
+                if (!techUrl && n.techId && n.techId.startsWith('CWE-')) {
+                    techUrl = 'https://cwe.mitre.org/data/definitions/' + n.techId.substring(4) + '.html';
+                }
+                if (techUrl) {
+                    d.innerHTML += '<a href="' + esc(techUrl) + '" target="_blank" class="mm-cwe-link" onclick="event.stopPropagation()" title="Open CWE definition"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a>';
                 }
                 break;
             case 'subtechnique':
                 d.classList.add('mm-subtechnique');
                 d.innerHTML = '<div class="mm-sub-marker"></div><span class="mm-tech-id">' + esc(n.techId) + '</span><span class="mm-tech-name">' + esc(n.techName) + '</span>';
-                if (cweLinks[n.techId]) {
-                    d.innerHTML += '<a href="' + esc(cweLinks[n.techId]) + '" target="_blank" class="mm-cwe-link" onclick="event.stopPropagation()" title="Open CWE definition"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a>';
+                let subUrl = cweLinks[n.techId];
+                if (!subUrl && n.techId && n.techId.startsWith('CWE-')) {
+                    subUrl = 'https://cwe.mitre.org/data/definitions/' + n.techId.substring(4) + '.html';
+                }
+                if (subUrl) {
+                    d.innerHTML += '<a href="' + esc(subUrl) + '" target="_blank" class="mm-cwe-link" onclick="event.stopPropagation()" title="Open CWE definition"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a>';
                 }
                 break;
             case 'tool': {
