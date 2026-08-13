@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Interactive mindmap visualizing OWASP Top 10 categories, CWEs, and security tools with full search, filtering, and command reference." />
+    <title>OWASP Top 10 — Tools Mindmap</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Building Mindmap...</div>
+        <div class="loading-sub">Laying out tool examples mappings across the OWASP Top 10 framework</div>
+    </div>
+
+
+    <div id="mm-viewport">
+        <div id="mm-canvas"></div>
+    </div>
+
+
+    <div id="top-bar">
+        <div class="logo-mark">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="color:var(--accent-cyan)">
+                    <path d="M12 2l8.66 5v10L12 22l-8.66-5V7z" />
+                </svg>
+            </div>
+            <div class="logo-text">OWASP Top 10 <span>/ Tools Map</span></div>
+        </div>
+
+        <div id="search-wrapper">
+            <span id="search-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                </svg>
+            </span>
+            <input type="text" id="search-input" placeholder="Search tools, CWEs, or categories..." autocomplete="off"
+                spellcheck="false" />
+            <div id="search-results"></div>
+        </div>
+
+
+        <button id="theme-toggle" title="Toggle Light/Dark Mode">
+
+            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+
+            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+        </button>
+    </div>
+
+
+    <div id="stats-bar">
+        <div class="stat-item">
+            <div class="stat-dot" style="background:var(--accent-cyan)"></div>
+            <span>Categories</span>
+            <span class="stat-value" id="stat-tactics">0</span>
+        </div>
+        <div class="stat-item">
+            <div class="stat-dot" style="background:var(--accent-orange)"></div>
+            <span>CWEs</span>
+            <span class="stat-value" id="stat-techniques">0</span>
+        </div>
+        <div class="stat-item">
+            <div class="stat-dot" style="background:var(--accent-green)"></div>
+            <span>Tool Examples</span>
+            <span class="stat-value" id="stat-tools">0</span>
+        </div>
+        <div class="stat-item">
+            <div class="stat-dot" style="background:var(--accent-purple)"></div>
+            <span>Categories</span>
+            <span class="stat-value" id="stat-categories">0</span>
+        </div>
+    </div>
+
+
+    <div id="tactic-index">
+        <div class="tactic-index-header" id="tactic-index-header">
+            <div class="tactic-index-toggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </div>
+            <span class="tactic-index-title-text">Category Index</span>
+        </div>
+        <div class="tactic-index-body" id="tactic-index-body">
+
+        </div>
+    </div>
+
+
+    <div id="legend-panel">
+        <div class="legend-title">Node Legend</div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--accent-cyan); color:var(--accent-cyan)"></div>
+            <span>Root — OWASP Top 10</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--accent-red); color:var(--accent-red)"></div>
+            <span>OWASP Category</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--accent-orange); color:var(--accent-orange)"></div>
+            <span>CWE (Weakness)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--accent-green); color:var(--accent-green)"></div>
+            <span>Tool Example</span>
+        </div>
+    </div>
+
+
+    <div id="controls">
+        <button class="ctrl-btn" id="btn-zoom-in" title="Zoom In">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+        </button>
+        <button class="ctrl-btn" id="btn-zoom-out" title="Zoom Out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+        </button>
+        <button class="ctrl-btn" id="btn-fit" title="Fit All">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+            </svg>
+        </button>
+        <button class="ctrl-btn" id="btn-center" title="Center View">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="12" r="9" />
+            </svg>
+        </button>
+    </div>
+
+
+    <div id="side-panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-technique-id" id="panel-technique-id"></div>
+                <div class="panel-technique-name" id="panel-technique-name"></div>
+            </div>
+            <button class="panel-close" id="panel-close" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="panel-body">
+            <div class="panel-section">
+                <div class="panel-section-label">Tool</div>
+                <div class="panel-tool-name" id="panel-tool-name"></div>
+                <div class="panel-tool-category" id="panel-tool-category"></div>
+            </div>
+            <div class="panel-section">
+                <div class="panel-section-label">Details</div>
+                <div class="badge-row" id="panel-badges"></div>
+            </div>
+            <div class="panel-section">
+                <div class="panel-section-label">Example Command / Usage</div>
+                <div class="code-block-wrapper">
+                    <div class="code-block-header">
+                        <span class="code-block-label">Terminal</span>
+                        <button class="copy-btn" id="copy-cmd-btn">
+                            <svg id="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            <span id="copy-text">Copy</span>
+                        </button>
+                    </div>
+                    <div class="code-block-content" id="panel-command"></div>
+                </div>
+            </div>
+            <div class="panel-section">
+                <a class="suggest-edit-btn" href="https://github.com/msdbg/owasp-toolsmap/issues/new" target="_blank"
+                    rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Suggest an Edit
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
