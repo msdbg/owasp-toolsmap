@@ -7,7 +7,7 @@ Toolmap that visualizes OWASP Top 10 categories, CWEs, and the security tools as
 ![alt text](image-1.png)
 
 ## CWEs mapped with tools
-![alt text](cwe-screenshot.png)
+![alt text](image-2.png)
 
 This is the second mindmap i published, this one maps OWASP Top 10 Category and their CWEs with Tools & Examples, it's always welcome for contributions, if you want to contribute you can use the following json format.
 
